@@ -1,61 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SoftPoint API (Laravel) Developer Challenge Submission
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This repository contains the complete solution for the API (Laravel) Developer Challenge from SoftPoint. The project is a robust, well-tested, and professionally structured RESTful API for managing Real Estate properties.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Technical Overview & Evaluation Highlights
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+This API was built with modern Laravel best practices at its core, focusing on code quality, testability, and adherence to the project specifications.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+*   **RESTful Architecture:** The API follows REST principles with a versioned endpoint (`/api/v1/`). It utilizes standard HTTP methods (`GET`, `POST`, `PUT`, `DELETE`) for all CRUD operations via a resourceful route (`Route::apiResource`).
 
-## Learning Laravel
+*   **Validation:** All incoming data is rigorously validated using dedicated **Form Request** classes (`StoreRealEstateRequest`, `UpdateRealEstateRequest`). This keeps the controller logic clean and focused, while handling complex conditional rules (e.g., `rooms` must be zero for `land` types, `internal_number` is required for `department` types).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+*   **Database Design & Management:**
+    *   **Migrations:** The database schema is fully defined and version-controlled through Laravel Migrations. The blueprint is the single source of truth for the database structure.
+    *   **Factories & Seeders:** The database is populated with realistic sample data using a Model Factory and the main Database Seeder, making the API immediately testable upon setup.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+*   **API Resources (Transformation Layer):** JSON responses are precisely shaped using `RealEstateResource` and `RealEstateCollectionResource`. This ensures the API adheres to the specified output formats: a summary view for lists (`index`) and a detailed view for single records (`show`, `store`, `update`, `destroy`).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+*   **Soft Deletes:** The `DELETE` endpoint utilizes Laravel's Soft Deletes feature. Records are not permanently removed from the database, preserving data integrity while fulfilling the "recently removed record" requirement.
 
-## Laravel Sponsors
+*   **Automated Testing:** The entire API is covered by a comprehensive **Feature Test** suite (`RealEstateApiTest`).
+    *   Tests are written for all five controller operations (`index`, `store`, `show`, `update`, `destroy`).
+    *   The test environment is configured to use an **in-memory SQLite database** for maximum speed and isolation, ensuring that tests do not interfere with the development database and can be run reliably in any environment.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Prerequisites
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+To run this project, you will need the following installed on your system:
+- PHP >= 8.2 (with `mysql` and `sqlite` extensions)
+- Composer
+- MySQL
+- Git
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Setup and Installation Guide
 
-## Code of Conduct
+Please follow these steps to get the project running locally.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**1. Clone the repository:**
+```bash
+git clone https://github.com/ibilalahmed/softpoint-laravel-challenge.git
+cd softpoint-laravel-challenge
+```
 
-## Security Vulnerabilities
+**2. Install PHP Dependencies:**
+```bash
+composer install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**3. Configure Environment:**
+Create your personal environment file by copying the example.
+```bash
+cp .env.example .env
+```
 
-## License
+**4. Generate Application Key:**
+```bash
+php artisan key:generate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**5. Set Up Your Database:**
+You will need to create a new, empty MySQL database for the application. Once created, open the `.env` file and update the `DB_` variables with your credentials.
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=softpoint_challenge # The name of the empty database you created
+DB_USERNAME=your_db_user      # Your MySQL username
+DB_PASSWORD=your_db_password  # Your MySQL password
+```
+
+**6. Migrate and Seed the Database:**
+This single command will build the entire database schema and populate it with 25 sample records.
+```bash
+php artisan migrate --seed
+```
+
+**7. Start the Local Server:**
+```bash
+php artisan serve
+```
+The API is now running and available at `http://127.0.0.1:8000`.
+
+---
+
+## Running the Automated Tests
+
+To verify the integrity and correctness of the API, run the full feature test suite. This will use a separate, in-memory SQLite database and will not affect your MySQL data.
+
+```bash
+php artisan test
+```
+All tests should pass, confirming that every endpoint and its logic is functioning as expected.
+
+---
+
+## API Endpoints
+
+**Base URL:** `http://127.0.0.1:8000/api/v1`
+
+| Method   | URI                      | Action    | Description                                   |
+|----------|--------------------------|-----------|-----------------------------------------------|
+| `GET`    | `/real-estates`          | `index`   | List all real estate properties (paginated).  |
+| `GET`    | `/real-estates/{id}`     | `show`    | Get a single real estate property by ID.      |
+| `POST`   | `/real-estates`          | `store`   | Create a new real estate property.            |
+| `PUT`    | `/real-estates/{id}`     | `update`  | Update an existing real estate property.      |
+| `DELETE` | `/real-estates/{id}`     | `destroy` | Soft-delete a real estate property.           |
+
+**Example `POST` Request Body:**
+```json
+{
+    "name": "My New Apartment",
+    "real_state_type": "department",
+    "street": "Coding Avenue",
+    "external_number": "404",
+    "internal_number": "Apt 101",
+    "neighborhood": "Tech Park",
+    "city": "Laravel City",
+    "country": "MX",
+    "rooms": 2,
+    "bathrooms": 1,
+    "comments": "Great view!"
+}
+```
+
+---
+
+Thank you for the opportunity to complete this challenge.
