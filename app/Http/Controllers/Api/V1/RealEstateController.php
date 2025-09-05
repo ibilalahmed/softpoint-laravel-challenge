@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\RealEstateCollectionResource; // <-- Import
-use App\Http\Resources\RealEstateResource;           // <-- Import
+use App\Http\Requests\StoreRealEstateRequest;
+use App\Http\Requests\UpdateRealEstateRequest; 
+use App\Http\Resources\RealEstateCollectionResource;
+use App\Http\Resources\RealEstateResource;
 use App\Models\RealEstate;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class RealEstateController extends Controller
 {
@@ -15,16 +17,22 @@ class RealEstateController extends Controller
      */
     public function index()
     {
-        // Use the "List" resource for the collection
         return RealEstateCollectionResource::collection(RealEstate::paginate(10));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRealEstateRequest $request)
     {
-        // We will implement this after validation
+        // Validation is handled automatically by StoreRealEstateRequest.
+        $realEstate = RealEstate::create($request->validated());
+
+        // Return the newly created record, using the detailed resource format.
+        // Respond with 201 Created status code.
+        return (new RealEstateResource($realEstate))
+                ->response()
+                ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -32,16 +40,19 @@ class RealEstateController extends Controller
      */
     public function show(RealEstate $realEstate)
     {
-        // Use the "Full Detail" resource for a single item
         return new RealEstateResource($realEstate);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, RealEstate $realEstate)
+    public function update(UpdateRealEstateRequest $request, RealEstate $realEstate)
     {
-        // We will implement this after validation
+        // Validation is handled automatically by UpdateRealEstateRequest.
+        $realEstate->update($request->validated());
+
+        // Return the newly updated record, as per the challenge requirement.
+        return new RealEstateResource($realEstate);
     }
 
     /**
@@ -49,6 +60,10 @@ class RealEstateController extends Controller
      */
     public function destroy(RealEstate $realEstate)
     {
-        // We will implement this after soft-deletes
+        // This performs a soft delete because of the SoftDeletes trait on the model.
+        $realEstate->delete();
+
+        // Return the recently removed record, as per the challenge requirement.
+        return new RealEstateResource($realEstate);
     }
 }
